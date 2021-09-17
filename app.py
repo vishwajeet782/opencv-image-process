@@ -1,4 +1,5 @@
 import cv2
+from numpy.lib.type_check import imag
 import streamlit as st
 import numpy as np
 from PIL import Image
@@ -18,7 +19,7 @@ st.write("Created by vishwajeet jagtap")
 
 add_selectbox = st.sidebar.selectbox(
     "What operations would u like to perform",
-    ("About","Change color","image blend","Selfie segmentation","Face mesh")
+    ("About","Change color","image blend","Selfie segmentation","Face mesh","grey","yellow")
 )
 if add_selectbox=="About":
     st.write("this app is for demo purpose")
@@ -94,3 +95,23 @@ elif add_selectbox=="Face mesh":
         for face_landmarks in results.multi_face_landmarks:
             mp_drawing.draw_landmarks(image,face_landmarks)
         st.image(image)   
+elif add_selectbox=="grey":
+    st.write("changing to grey")
+    file_upload=st.sidebar.file_uploader("upload")
+    if file_upload is not None:
+        st.sidebar.image(file_upload)
+        grey_image=(np.array(Image.open(file_upload)))
+        grey_image=cv2.cvtColor(grey_image,cv2.COLOR_BGR2GRAY)
+        st.image(grey_image)
+elif add_selectbox=="yellow":
+    file_uploader=st.sidebar.file_uploader("UPLOAD input image")
+    if file_uploader is not None:
+        st.sidebar.image(file_uploader)
+        
+        yellow=(np.array(Image.open(file_uploader)))
+        zeros=(np.zeros(yellow.shape[:2],dtype=np.uint8))
+        b,g,r=cv2.split(yellow)
+        yellow=cv2.merge([b,zeros,r])
+        p=cv2.putText(yellow,"hello",(400,500),cv2.FONT_HERSHEY_DUPLEX,8,(0,0,255),5)
+        st.image(p)
+        
